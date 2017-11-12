@@ -59,22 +59,26 @@
 
 ;; edit settings
 
-;; タブ文字ではなくスペースを使う
+;;;; Shift + up/down でバッファ切り替え
+(windmove-default-keybindings)
+(setq windmove-wrap-around t)
+
+;;;; タブ文字ではなくスペースを使う
 (setq-default indent-tabs-mode nil)
 
-;; タブ幅をスペース4つ分にする
+;;;; タブ幅をスペース4つ分にする
 (setq-default tab-width 4)
 
-;; バックアップとオートセーブファイルを~/.emacs.d/backups/へ集める
+;;;; バックアップとオートセーブファイルを~/.emacs.d/backups/へ集める
 (add-to-list 'backup-directory-alist
              (cons "." "~/.emacs.d/backups/"))
 (setq auto-save-file-name-transforms
       `((".*" ,(expand-file-name "~/.emacs.d/backups/") t)))
 
-;; 行の先頭でC-kを一回押すだけで行全体を消去する
+;;;; 行の先頭でC-kを一回押すだけで行全体を消去する
 (setq kill-whole-line t)
 
-;;; 最終行に必ず一行挿入する
+;;;; 最終行に必ず一行挿入する
 (setq require-final-newline t)
 
 ;; package settings
@@ -93,6 +97,12 @@
 ;; 初期化
 (package-initialize)
 
+;; auto-complete settings
+
+    (require 'auto-complete)
+    (require 'auto-complete-config)    ; 必須ではないですが一応
+    (global-auto-complete-mode t)
+
 ;; SLIME settings
 
 ;; SBCLをデフォルトのCommon Lisp処理系に設定
@@ -104,6 +114,31 @@
 (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
 ;; SLIMEからの入力をUTF-8に設定
 (setq slime-net-coding-system 'utf-8-unix)
+
+;; ac-slime settings
+(require 'ac-slime)
+(add-hook 'slime-mode-hook 'set-up-slime-ac)
+(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+
+;; popwin.el settings
+(require 'popwin)
+(setq display-buffer-function 'popwin:display-buffer)
+;; Apropos
+(push '("*slime-apropos*") popwin:special-display-config)
+;; Macroexpand
+(push '("*slime-macroexpansion*") popwin:special-display-config)
+;; Help
+(push '("*slime-description*") popwin:special-display-config)
+;; Compilation
+(push '("*slime-compilation*" :noselect t) popwin:special-display-config)
+;; Cross-reference
+(push '("*slime-xref*") popwin:special-display-config)
+;; Debugger
+(push '(sldb-mode :stick t) popwin:special-display-config)
+;; REPL
+(push '(slime-repl-mode) popwin:special-display-config)
+;; Connections
+(push '(slime-connection-list-mode) popwin:special-display-config)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

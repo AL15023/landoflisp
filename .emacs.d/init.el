@@ -1,142 +1,34 @@
+;;; init.el --- Spacemacs Initialization File
+;;
+;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
+;;
+;; Author: Sylvain Benner <sylvain.benner@gmail.com>
+;; URL: https://github.com/syl20bnr/spacemacs
+;;
+;; This file is not part of GNU Emacs.
+;;
+;;; License: GPLv3
 
-;; ignission
-(setq inhibit-startup-screen t)
+;; Without this comment emacs25 adds (package-initialize) here
+;; (package-initialize)
 
-;; common settings
+;; Increase gc-cons-threshold, depending on your system you may set it back to a
+;; lower value in your dotfile (function `dotspacemacs/user-config')
+(setq gc-cons-threshold 100000000)
 
-;; view settings
+(defconst spacemacs-version         "0.200.10" "Spacemacs version.")
+(defconst spacemacs-emacs-min-version   "24.4" "Minimal version of Emacs.")
 
-;; タイトルパーにファイルのフルパスを表示する
-(setq frame-title-format "%f")
-
-;; フレーム(ウィンドウ)の透明度を設定する
-(set-frame-parameter (selected-frame) 'alpha '(0.90))
-
-;; 行番号を表示する
-(global-linum-mode t)
-
-;; カラム番号も表示する
-(column-number-mode t)
-
-;; カーソルのある行をハイライトする
-(global-hl-line-mode t)
-
-;; 空白文字を強制表示
-(setq-default show-trailing-whitespace t)
-(set-face-background 'trailing-whitespace "#b14770")
-
-;; 対応する括弧を表示
-(show-paren-mode t)
-(setq show-paren-delay 0)
-
-;; 行間
-(setq-default line-spacing 0)
-
-;; 全角スペースを強制表示する
-(require 'whitespace)
-(global-whitespace-mode 1)
-(setq whitespace-style '(face
-                         trailing
-                         tabs
-                         spaces
-                         empty
-                         space-mark
-                         tab-mark
-                         ))
-(setq whitespace-display-mappings
-      '((space-mark ?\u3000 [?\u25a1])
-        (tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
-(setq whitespace-space-regexp "\\(\u3000+\\)")
-
-;; png, jpg などのファイルを画像として表示
-(setq auto-image-file-mode t)
-;; operation settings
-
-;; 1行ずつスクロールさせる
-(setq scroll-conservatively 35
-      scroll-margin 0
-      scroll-step 1)
-
-;; edit settings
-
-;; タブ文字ではなくスペースを使う
-(setq-default indent-tabs-mode nil)
-
-;; タブ幅をスペース4つ分にする
-(setq-default tab-width 4)
-
-;; バックアップとオートセーブファイルを~/.emacs.d/backups/へ集める
-(add-to-list 'backup-directory-alist
-             (cons "." "~/.emacs.d/backups/"))
-(setq auto-save-file-name-transforms
-      `((".*" ,(expand-file-name "~/.emacs.d/backups/") t)))
-
-;; 行の先頭でC-kを一回押すだけで行全体を消去する
-(setq kill-whole-line t)
-
-;;; 最終行に必ず一行挿入する
-(setq require-final-newline t)
-
-;; package settings
-
-;; package.el settings
-
-(require 'package)
-;; MELPAを追加
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;; MELPA-stableを追加
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-;; Marmaladeを追加
-(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;; Orgを追加
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-;; 初期化
-(package-initialize)
-
-;; SLIME settings
-
-;; SBCLをデフォルトのCommon Lisp処理系に設定
-(setq inferior-lisp-program "sbcl")
-;; ~/.emacs.d/slimeをload-pathに追加 ;; package.elにセッティングしたので一時コメントアウト
-;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/slime"))
-;; SLIMEのロード
-(require 'slime)
-(slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
-;; SLIMEからの入力をUTF-8に設定
-(setq slime-net-coding-system 'utf-8-unix)
-
-;; ac-slime settings
-(require 'ac-slime)
-(add-hook 'slime-mode-hook 'set-up-slime-ac)
-(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-
-;; popwin.el settings
-;; Apropos
-(push '("*slime-apropos*") popwin:special-display-config)
-;; Macroexpand
-(push '("*slime-macroexpansion*") popwin:special-display-config)
-;; Help
-(push '("*slime-description*") popwin:special-display-config)
-;; Compilation
-(push '("*slime-compilation*" :noselect t) popwin:special-display-config)
-;; Cross-reference
-(push '("*slime-xref*") popwin:special-display-config)
-;; Debugger
-(push '(sldb-mode :stick t) popwin:special-display-config)
-;; REPL
-(push '(slime-repl-mode) popwin:special-display-config)
-;; Connections
-(push '(slime-connection-list-mode) popwin:special-display-config)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (popwin ac-slime slime auto-complete))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(if (not (version<= spacemacs-emacs-min-version emacs-version))
+    (error (concat "Your version of Emacs (%s) is too old. "
+                   "Spacemacs requires Emacs version %s or above.")
+           emacs-version spacemacs-emacs-min-version)
+  (load-file (concat (file-name-directory load-file-name)
+                     "core/core-load-paths.el"))
+  (require 'core-spacemacs)
+  (spacemacs/init)
+  (configuration-layer/sync)
+  (spacemacs-buffer/display-startup-note)
+  (spacemacs/setup-startup-hook)
+  (require 'server)
+  (unless (server-running-p) (server-start)))
